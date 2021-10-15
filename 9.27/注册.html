@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jquery.js"></script>
+    <link rel="stylesheet" href="clear.css">
+    <style>
+        html,body{
+            width: 100%;
+            height: 100%;
+        }
+        body{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #0099cc;
+        }
+        #wrap{
+            width: 700px;
+            min-height: 200px;
+            background-color: white;
+            padding: 10px;
+        }
+        #wrap > div{
+            margin: 10px 0;
+        }
+        #wrap >div label{
+            width: 60px;
+            display: inline-block;
+        }
+        .error{
+            color: red;
+            margin-left: 10px;
+        }
+        .right{
+            color: green;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <div>
+            <label for="user">用户名：</label>
+            <input type="text" name="user" id="user">
+            <span class="tips"></span>
+        </div>
+        <div>
+            <label for="pwd">密&nbsp;&nbsp;&nbsp;码：</label>
+            <input type="password" name="user" id="pwd">
+        </div>
+        <div><button>提交</button></div>
+    </div>
+    <script>
+        function sendAjax(obj,success) {
+            $.ajax({
+                type:"post",
+                url:"http://127.0.0.1:3000",
+                data:obj,
+                success:success,
+                error:function (err) {
+                    console.log(err);
+                }
+            })
+        }
+        $(function () {
+            $("#user").blur(function () {
+                let obj = {};
+                obj.username = document.getElementById("user").value;
+                obj.info = "find";
+                function success(data) {
+                    $(".tips").html(data.result);
+                    if(data.flag == 0){
+                        $(".tips").addClass("error");
+                    }else {
+                        $(".tips").addClass("right");
+                    }
+                }
+                sendAjax(obj,success);
+            });
+            $("button").click(function () {
+                let obj = {};
+                obj.username = document.getElementById("user").value;
+                obj.pwd = document.getElementById("pwd").value;
+                obj.info = "submit";
+                function success(data) {
+                    if(data.flag == 0){
+                        alert("注册失败");
+                    }else {
+                        alert("注册成功");
+                    }
+                    location.reload();
+                    obj.info = "find";
+                }
+                sendAjax(obj,success);
+            })
+        })
+    </script>
+</body>
+</html>
