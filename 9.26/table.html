@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        #box{
+            width: 500px;
+            height: 400px;
+            position: absolute;
+            left: 50%;
+            margin-left: -250px;
+        }
+        table{
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+        thead{
+            font-weight: bold;
+        }
+        td{
+            width: 100px;
+            height: 30px;
+            line-height: 30px;
+            font-size: 18px;
+            text-align: center;
+        }
+        #ul1{
+            display: flex;
+            list-style: none;
+            justify-content: center;
+        }
+        #ul1 li{
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            border: 1px solid;
+            margin-left: 10px;
+            margin-right: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body onload="sendAjax()">
+    <div id="box">
+        <h3 align="center">基本信息</h3>
+        <table border="1">
+            <thead>
+            <tr>
+                <td>name</td>
+                <td>age</td>
+                <td>sex</td>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <p style="margin-left: 100px;margin-bottom: 10px;">每页3条记录</p>
+        <ul id="ul1">
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+        </ul>
+    </div>
+    <script>
+        var tbd = document.getElementsByTagName("tbody")[0];
+        var lis = document.getElementsByTagName("li");
+        var currentPage = 1,limitNum = 3;
+        lis[0].style.backgroundColor = "red";
+        lis[0].style.color = "white";
+        function sendAjax() {
+            var xmlhttp;
+            if(window.XMLHttpRequest){
+                xmlhttp = new XMLHttpRequest();
+            }else{
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP")
+            }
+            xmlhttp.open("get","http://127.0.0.1:3000?currentPage=" + currentPage + "&limitNum=" + limitNum,true);
+            xmlhttp.send();
+            xmlhttp.onreadystatechange = function () {
+                if(xmlhttp.readyState == 4 && xmlhttp.status == 200){
+                    var data = JSON.parse(xmlhttp.responseText);
+                    tbd.innerHTML = "";
+                    for(var i = 0;i < data.length;i++)
+                    {
+                        var tr = document.createElement("tr");
+                        for(var key in data[i])
+                        {
+                            var td = document.createElement("td");
+                            td.innerHTML = data[i][key];
+                            tr.appendChild(td);
+                        }
+                        tbd.appendChild(tr);
+                    }
+                }
+            }
+        }
+        for(var i = 0;i < lis.length;i++)
+        {
+            lis[i].onclick = function () {
+                lis[currentPage - 1].style.backgroundColor = "white";
+                lis[currentPage - 1].style.color = "black";
+                currentPage = Number(this.innerHTML);
+                this.style.backgroundColor = "red";
+                this.style.color = "white";
+                sendAjax();
+            }
+        }
+    </script>
+</body>
+</html>
